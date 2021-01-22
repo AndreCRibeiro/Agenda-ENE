@@ -3,6 +3,8 @@ import { FiMail, FiLock, FiUser, FiArrowLeft } from 'react-icons/fi';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
+
+import api from '../../services/api';
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import Logo from '../../assets/logo.svg';
@@ -12,10 +14,16 @@ import Button from '../../components/Button';
 
 import { Container, Content, Background } from './styles';
 
+interface SignUpFormData {
+    name: string;
+    email: string;
+    password: string;
+}
+
 const SignUp: React.FC = () => {
     const formRef = useRef<FormHandles>(null)
 
-    const handleSubmit = useCallback(async (data: object) => {
+    const handleSubmit = useCallback(async (data: SignUpFormData) => {
         try {
             formRef.current?.setErrors({});
 
@@ -29,7 +37,9 @@ const SignUp: React.FC = () => {
                 abortEarly: false,
             });
 
+            console.log('entrei');
 
+            await api.post('/users', data);
         } catch (err) {
             const errors = getValidationErrors(err);
             formRef.current?.setErrors(errors);
