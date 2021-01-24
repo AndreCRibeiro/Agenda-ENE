@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, ChangeEvent } from 'react'
+import React, { useCallback, useRef, ChangeEvent, useMemo } from 'react'
 import { FiMail, FiUser, FiLock, FiCamera, FiArrowLeft } from 'react-icons/fi'
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
@@ -109,7 +109,7 @@ const Profile: React.FC = () => {
                 })
             }
         },
-        [addToast, history],
+        [addToast, history, updateUser],
     )
 
     const handleAvatarChange = useCallback(
@@ -132,6 +132,14 @@ const Profile: React.FC = () => {
         [addToast, updateUser],
     )
 
+    const handleAvatarLocalHost = useMemo(() => {
+        const teste = user.avatar_url.split(':');
+        const req = 'http://192.168.0.6:' + teste[2]
+
+        return req;
+    }, [user.avatar_url]);
+
+
     return (
         <Container>
             <header>
@@ -152,7 +160,7 @@ const Profile: React.FC = () => {
                     onSubmit={handleSubmit}
                 >
                     <AvatarInput>
-                        <img src='https://avatars.githubusercontent.com/u/26776218?s=460&u=964b019741d54bdcd2d147c5dd86c4d495bf76dd&v=4' alt={user.name} />
+                        <img src={handleAvatarLocalHost} alt={user.name} />
                         <label htmlFor="avatar">
                             <FiCamera />
                             <input type="file" id="avatar" onChange={handleAvatarChange} />
