@@ -3,7 +3,8 @@ import { isToday, format, parseISO, isAfter } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import DayPicker, { DayModifiers } from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
-import { Avatar } from "baseui/avatar";
+// import { Avatar } from "baseui/avatar";
+import Avatar from '../../components/Avatar';
 
 import { useAuth } from '../../hooks/AuthContext';
 
@@ -15,7 +16,7 @@ import {
     Header,
     HeaderContent,
     Profile,
-    Image,
+    // Image,
     Content,
     Schedule,
     NextAppointment,
@@ -47,6 +48,7 @@ const Dashboard: React.FC = () => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [monthAvailability, setMonthAvailability] = useState<MonthAvailabilityItem[]>([]);
     const [appointments, setAppointments] = useState<Appointment[]>([]);
+    const [teste, setTeste] = useState('');
 
     const handleDateChange = useCallback((day: Date, modifiers: DayModifiers) => {
         if (modifiers.available && !modifiers.disabled) {
@@ -130,6 +132,33 @@ const Dashboard: React.FC = () => {
         );
     }, [appointments])
 
+    const handleAvatarLocalHost = useMemo(() => {
+        if (user.avatar_url !== '') {
+            const teste = user.avatar_url.split(':');
+            const req = 'http://192.168.0.6:' + teste[2]
+
+            return req;
+        }
+        return false;
+    }, [user.avatar_url]);
+
+    const handleChar = useMemo(() => {
+        const userName = user.name;
+        let name = userName.split(' ')
+        if (name.length > 1) {
+            const teste = name[0].charAt(0) + name[name.length - 1].charAt(0)
+            console.log(teste);
+            return teste;
+        } else {
+            const teste = name[0].charAt(0);
+            console.log(teste);
+            return teste
+        }
+    }, [user.name]);
+
+    console.log(handleChar);
+
+
     return (
         <Container>
             <Header>
@@ -137,20 +166,13 @@ const Dashboard: React.FC = () => {
                     <img src={logo} alt="AgendaENE" />
 
                     <Profile>
-                        <Image>
-                            <Avatar
-                                name={user.name}
-                                size="scale120"
-                                src="https://api.adorable.io/avatars/285/10@adorable.io.png"
-                                overrides={{
-                                    Initials: {
-                                        style: () => ({
-                                            backgroundColor: "red"
-                                        })
-                                    }
-                                }}
-                            />
-                        </Image>
+                        {
+                            handleAvatarLocalHost ? (
+                                <img src={handleAvatarLocalHost} alt="Avatar" />
+                            ) : (
+                                    <Avatar initials={handleChar} />
+                                )
+                        }
                         <div>
                             <span>Bem-vindo,</span>
                             <Link to="/profile"><strong>{user.name}</strong></Link>
@@ -266,7 +288,7 @@ const Dashboard: React.FC = () => {
                     />
                 </Calendar>
             </Content>
-        </Container>
+        </Container >
     )
 }
 
